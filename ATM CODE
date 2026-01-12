@@ -1,0 +1,76 @@
+# Simple ATM Program with Passbook
+import datetime
+
+PASSBOOK_FILE = "passbook.txt"
+PIN = "1234"
+balance = 5000
+
+def write_passbook(msg):
+    with open(PASSBOOK_FILE, "a") as f:
+        f.write(msg + "\n")
+
+def read_passbook():
+    try:
+        with open(PASSBOOK_FILE, "r") as f:
+            print("\n----- PASSBOOK -----")
+            print(f.read())
+    except FileNotFoundError:
+        print("\nNo transactions found.")
+
+def atm_menu():
+    print("\n----- ATM MENU -----")
+    print("1. Check Balance")
+    print("2. Deposit Money")
+    print("3. Withdraw Money")
+    print("4. Passbook")
+    print("5. Exit")
+
+def main():
+    global balance
+    print("Welcome to ATM")
+
+    user_pin = input("Enter PIN: ")
+    if user_pin != PIN:
+        print("Wrong PIN! Access Denied.")
+        return
+
+    print("Login Successful!")
+
+    while True:
+        atm_menu()
+        choice = input("Choose option: ")
+
+        if choice == "1":
+            print(f"Your Balance: ₹{balance}")
+            write_passbook(f"{datetime.datetime.now()} - Balance Check: ₹{balance}")
+
+        elif choice == "2":
+            amount = int(input("Enter deposit amount: "))
+            if amount > 0:
+                balance += amount
+                print("Deposit Successful")
+                write_passbook(f"{datetime.datetime.now()} - Deposited: ₹{amount}")
+            else:
+                print("Invalid Amount")
+
+        elif choice == "3":
+            amount = int(input("Enter withdraw amount: "))
+            if amount <= balance and amount > 0:
+                balance -= amount
+                print("Please collect your cash")
+                write_passbook(f"{datetime.datetime.now()} - Withdrawn: ₹{amount}")
+            else:
+                print("Insufficient Balance")
+
+        elif choice == "4":
+            read_passbook()
+
+        elif choice == "5":
+            print("Thank you for using ATM")
+        
+            break
+
+        else:
+            print("Invalid Choice")
+
+main()
